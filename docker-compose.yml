@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  web-lab-1:
+    image: nginx:alpine
+    container_name: web-lab-1
+    restart: unless-stopped
+    ports:
+      - "172.21.30.254:80:80"
+    volumes:
+      - ./teams/1:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-1-net
+
+  web-lab-2:
+    image: nginx:alpine
+    container_name: web-lab-2
+    restart: unless-stopped
+    ports:
+      - "172.22.30.254:80:80"
+    volumes:
+      - ./teams/2:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-2-net
+
+  web-lab-3:
+    image: nginx:alpine
+    container_name: web-lab-3
+    restart: unless-stopped
+    ports:
+      - "172.23.30.254:80:80"
+    volumes:
+      - ./teams/3:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-3-net
+
+  web-lab-4:
+    image: nginx:alpine
+    container_name: web-lab-4
+    restart: unless-stopped
+    ports:
+      - "172.24.30.254:80:80"
+    volumes:
+      - ./teams/4:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-4-net
+
+  web-lab-5:
+    image: nginx:alpine
+    container_name: web-lab-5
+    restart: unless-stopped
+    ports:
+      - "172.25.30.254:80:80"
+    volumes:
+      - ./teams/5:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-5-net
+
+  web-lab-6:
+    image: nginx:alpine
+    container_name: web-lab-6
+    restart: unless-stopped
+    ports:
+      - "172.26.30.254:80:80"
+    volumes:
+      - ./teams/6:/usr/share/nginx/html:ro
+    networks:
+      - web-lab-6-net
+
+networks:
+  web-lab-1-net:
+    driver: bridge
+  web-lab-2-net:
+    driver: bridge
+  web-lab-3-net:
+    driver: bridge
+  web-lab-4-net:
+    driver: bridge
+  web-lab-5-net:
+    driver: bridge
+  web-lab-6-net:
+    driver: bridge

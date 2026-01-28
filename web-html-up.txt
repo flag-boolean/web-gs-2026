@@ -1,0 +1,41 @@
+docker run -d \
+  --name web-lab-1 \
+  --restart unless-stopped \
+  -p 172.21.30.254:80:80 \
+  -v ~/teams/1:/usr/share/nginx/html:ro \
+  nginx:alpine
+
+docker run -d \
+  --name web-lab-2 \
+  --restart unless-stopped \
+  -p 172.22.30.254:80:80 \
+  -v ~/teams/2:/usr/share/nginx/html:ro \
+  nginx:alpine
+
+  docker run -d \
+  --name web-lab-3 \
+  --restart unless-stopped \
+  -p 172.23.30.254:80:80 \
+  -v ~/teams/3:/usr/share/nginx/html:ro \
+  nginx:alpine
+
+  docker run -d \
+  --name web-lab-4 \
+  --restart unless-stopped \
+  -p 172.24.30.254:80:80 \
+  -v ~/teams/4:/usr/share/nginx/html:ro \
+  nginx:alpine
+
+docker run -d \
+  --name web-lab-5 \
+  --restart unless-stopped \
+  -p 172.25.30.254:80:80 \
+  -v ~/teams/5:/usr/share/nginx/html:ro \
+  nginx:alpine
+
+  docker run -d \
+  --name web-lab-6 \
+  --restart unless-stopped \
+  -p 172.26.30.254:80:80 \
+  -v ~/teams/6:/usr/share/nginx/html:ro \
+  nginx:alpine
