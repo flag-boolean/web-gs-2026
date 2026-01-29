@@ -1,13 +1,21 @@
 # ad-create-users
 
-Create users by powershell
+### Create users by powershell
 
-$Password = "TestPass123!" # ← ваш пароль
+### Перед запуском скрипта выполнить следующие шаги:
+ 1. Запустить PowerShell от имени администратора на Контроллере домена AD -> Set-ExecutionPolicy Bypass -Scope Process -Force
+2. Открыть оснастку Пользователи и компьютеры -> Создать Подразделение в корне - USERS
+3. Открыть скрипт на Изменение и вписать значения:
+   ```
+   $Password = "TestPass123!" # ← ваш пароль
+   $OU = "OU=USERS,DC=domain,DC=local" # ← ваш OU, Подразделение
+   $Domain = "domain.local" # ← ваш домен
+   $Company = "Тестовая компания" # Параметр не влияет ни на что
+   ```
+5. Перезапустить PowerShell от имени администратора и запустить скрипт:
+.\create-ad-users.ps1
 
-$OU = "OU=TestUsers,DC=domain,DC=local" # ← ваш OU
 
-$Domain = "test.local" # ← ваш домен
 
-$Company = "Тестовая компания" # Параметр не влияет ни на что
 
 В результате отработки скрипта буду созданы 1 ген.дир + 14 начальников + 14 сотрудников = 29 пользователей
