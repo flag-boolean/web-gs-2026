@@ -95,7 +95,7 @@ exit
 
 Сделаем правила iptables:
 - разрешаем **входящие** TCP/80 на конкретный `172.xx.30.254` **только** с нужного `wgX`;
-- разрешаем **SSH (TCP/22)** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`);
+- разрешаем **SSH, RDP (TCP/22, TCP/3389)** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`);
 - (опционально) разрешаем ICMP (ping) только к своему `172.xx.30.254`, если нужно;
 - для `wg1..wg6` **запрещаем остальной входящий трафик** (чтобы не было доступа к другим адресам сервера/стендов);
 - разрешаем handshakes WireGuard по UDP-портам.
@@ -118,14 +118,14 @@ sudo iptables -A INPUT -i wg4 -d 172.24.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg5 -d 172.25.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg6 -d 172.26.30.254 -p tcp --dport 80 -j ACCEPT
 
-# 3.05) SSH доступ только в свою /24 подсеть (если цели находятся "на стороне сервера" как отдельные хосты,
+# 3.05) SSH, RDP доступ только в свою /24 подсеть (если цели находятся "на стороне сервера" как отдельные хосты,
 # то трафик пойдет через FORWARD — см. блок ниже. Этот блок INPUT полезен, если цели являются локальными IP сервера.)
-sudo iptables -A INPUT -i wg1 -d 172.21.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -i wg2 -d 172.22.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -i wg3 -d 172.23.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -i wg4 -d 172.24.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -i wg5 -d 172.25.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -i wg6 -d 172.26.30.0/24 -p tcp --dport 22 -j ACCEPT
+sudo iptables -A INPUT -i wg1 -d 172.21.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A INPUT -i wg2 -d 172.22.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A INPUT -i wg3 -d 172.23.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A INPUT -i wg4 -d 172.24.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A INPUT -i wg5 -d 172.25.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A INPUT -i wg6 -d 172.26.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
 
 # 3.1) (Опционально) ping только к своему стенду (раскомментируйте при необходимости)
 # sudo iptables -A INPUT -i wg1 -d 172.21.30.254 -p icmp --icmp-type echo-request -j ACCEPT
@@ -368,3 +368,4 @@ curl -I http://172.21.30.254/
 - **Неправильный `Endpoint`**: должен быть белый IP сервера и порт конкретного `wgX`.
 - **Нет IP на сервере `172.xx.30.254`**: тогда nginx bind не поднимется и доступ не будет работать.
 - **Фаервол режет INPUT**: проверьте `iptables -L INPUT -n -v --line-numbers` и логи.
+
