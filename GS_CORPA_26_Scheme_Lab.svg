@@ -4609,5 +4609,20 @@
 			<title>Лист.1449</title>
 			<path d="M332.1 460.63 L332.1 595.28 L14.31 595.28" class="st7"/>
 		</g>
+		<g id="shape1620-2168" v:mID="1620" v:groupContext="shape" transform="translate(1179.21,-302.173)">
+			<title>Лист.1620</title>
+			<desc>10.0.X.2/24</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.5197" cy="589.89" width="85.04" height="10.7717"/>
+			<rect x="0" y="584.504" width="85.0394" height="10.7717" class="st20"/>
+			<text x="4" y="592.89" class="st10" v:langID="1049"><v:paragraph/><v:tabList/>10<tspan class="st11" v:langID="1033">.0.X.2/24</tspan></text>		</g>
+		<g id="shape1622-2172" v:mID="1622" v:groupContext="shape" transform="translate(1421.57,-390.047)">
+			<title>Лист.1622</title>
+			<desc>10.0.X.10-24/24</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.5197" cy="589.89" width="85.04" height="10.7717"/>
+			<rect x="0" y="584.504" width="85.0394" height="10.7717" class="st20"/>
+			<text x="4" y="592.89" class="st10" v:langID="1049"><v:paragraph/><v:tabList/>10<tspan class="st11" v:langID="1033">.0.X.10</tspan><tspan
+						class="st11" v:langID="1033">-</tspan><tspan class="st11" v:langID="1033">24/24</tspan></text>		</g>
 	</g>
 </svg>
