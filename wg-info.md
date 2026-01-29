@@ -162,13 +162,13 @@ ip route | grep 172.21.30.0/24
 sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # Team1: wg1 -> 172.21.30.0/24 (SSH)
-sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp --dport 22 -j ACCEPT
+sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
 # Team2..Team6:
-sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A FORWARD -i wg3 -d 172.23.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A FORWARD -i wg4 -d 172.24.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A FORWARD -i wg5 -d 172.25.30.0/24 -p tcp --dport 22 -j ACCEPT
-sudo iptables -A FORWARD -i wg6 -d 172.26.30.0/24 -p tcp --dport 22 -j ACCEPT
+sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg3 -d 172.23.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg4 -d 172.24.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg5 -d 172.25.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg6 -d 172.26.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
 
 # Запрещаем остальное с team интерфейсов
 sudo iptables -A FORWARD -i wg1 -j DROP
@@ -368,4 +368,5 @@ curl -I http://172.21.30.254/
 - **Неправильный `Endpoint`**: должен быть белый IP сервера и порт конкретного `wgX`.
 - **Нет IP на сервере `172.xx.30.254`**: тогда nginx bind не поднимется и доступ не будет работать.
 - **Фаервол режет INPUT**: проверьте `iptables -L INPUT -n -v --line-numbers` и логи.
+
 
