@@ -10,7 +10,7 @@
   - team5 → `172.25.30.254:80`
   - team6 → `172.26.30.254:80`
 
-Также: после открытия веба на `...254` участнику нужно ходить по **SSH к другим серверам в этой же /24 подсети** (например, `172.21.30.0/24` для team1).
+Также: после открытия веба на `...254` участнику нужно ходить по **всем портам к другим серверам в этой же /24 подсети** (например, `172.21.30.0/24` для team1).
 
 Важно (под ваш сценарий):
 - доступ к `172.xx.30.254:80` — это **INPUT** (nginx/docker на самом WireGuard-сервере);
@@ -95,8 +95,7 @@ exit
 
 Сделаем правила iptables:
 - разрешаем **входящие** TCP/80 на конкретный `172.xx.30.254` **только** с нужного `wgX`;
-- разрешаем **SSH, RDP (TCP/22, TCP/3389)** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`) через **FORWARD**;
-- (опционально) разрешаем ICMP (ping) только к своему `172.xx.30.254`, если нужно;
+- разрешаем **все** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`) через **FORWARD**;
 - для `wg1..wg6` **запрещаем остальной входящий трафик** (чтобы не было доступа к другим адресам сервера/стендов);
 - разрешаем handshakes WireGuard по UDP-портам.
 
@@ -117,14 +116,6 @@ sudo iptables -A INPUT -i wg3 -d 172.23.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg4 -d 172.24.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg5 -d 172.25.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg6 -d 172.26.30.254 -p tcp --dport 80 -j ACCEPT
-
-# 3.1) (Опционально) ping только к своему стенду (раскомментируйте при необходимости)
-# sudo iptables -A INPUT -i wg1 -d 172.21.30.254 -p icmp --icmp-type echo-request -j ACCEPT
-# sudo iptables -A INPUT -i wg2 -d 172.22.30.254 -p icmp --icmp-type echo-request -j ACCEPT
-# sudo iptables -A INPUT -i wg3 -d 172.23.30.254 -p icmp --icmp-type echo-request -j ACCEPT
-# sudo iptables -A INPUT -i wg4 -d 172.24.30.254 -p icmp --icmp-type echo-request -j ACCEPT
-# sudo iptables -A INPUT -i wg5 -d 172.25.30.254 -p icmp --icmp-type echo-request -j ACCEPT
-# sudo iptables -A INPUT -i wg6 -d 172.26.30.254 -p icmp --icmp-type echo-request -j ACCEPT
 
 # 4) Запрет "лишнего" трафика с team интерфейсов
 sudo iptables -A INPUT -i wg1 -j DROP
@@ -147,20 +138,20 @@ sudo iptables -A INPUT -i wg6 -j DROP
 ip route | grep 172.21.30.0/24
 ```
 
-2) Разрешите форвардинг только в свою подсеть (например, SSH/RDP — `TCP/22, TCP/3389`):
+2) Разрешите форвардинг только в свою подсеть:
 
 ```bash
 # Разрешаем established
 sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # Team1: wg1 -> 172.21.30.0/24 (SSH/RDP)
-sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp -j ACCEPT
 # Team2..Team6:
-sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A FORWARD -i wg3 -d 172.23.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A FORWARD -i wg4 -d 172.24.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A FORWARD -i wg5 -d 172.25.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A FORWARD -i wg6 -d 172.26.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
+sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg3 -d 172.23.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg4 -d 172.24.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg5 -d 172.25.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg6 -d 172.26.30.0/24 -p tcp -j ACCEPT
 
 # Запрещаем остальное с team интерфейсов
 sudo iptables -A FORWARD -i wg1 -j DROP
