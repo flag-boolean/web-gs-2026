@@ -12,7 +12,7 @@
 |--------|------|
 | Подключить сетевую папку от Windows к Linux | [mount-distrib-share](mount-distrib-share/readme.md) |
 | Поднять почту на отдельном сервере в домене ALD | [postfix-ald](postfix/postfix-ald.md) |
-| Поднять почту на контроллере домена ALD | [postfix-ald-dc](postfix/postfix-ald-dc.md)) |
+| Поднять почту на контроллере домена ALD | [postfix-ald-dc](postfix/postfix-ald-dc.md) |
 | Настроить WireGuard с изоляцией по командам | [wg-server](wg-server/readme.md) |
 | Создать пользователей в AD | [create-ad-users](ad-users-create/readme.md) |
 | Развернуть веб-приложения через Docker | [web/readme.md](web/readme.md) |
@@ -111,6 +111,7 @@
 - Все инструкции предполагают наличие базовых навыков администрирования Linux/Windows.
 - Порядок выполнения шагов в каждой инструкции критичен.
 - Перед применением в продакшене обязательно протестируйте в тестовом окружении.
+
 
 
 
