@@ -12,9 +12,9 @@
 
 Также: после открытия веба на `...254` участнику нужно ходить по **SSH к другим серверам в этой же /24 подсети** (например, `172.21.30.0/24` для team1).
 
-Важно:
-- доступ к `172.xx.30.254:80` — это обычно **INPUT** (т.к. nginx биндится на локальный IP сервера);
-- доступ к “другим серверам” в `172.xx.30.0/24` может быть как **INPUT** (если IP тоже локальные на сервере), так и **FORWARD** (если это отдельные хосты за интерфейсом/маршрутом). Ниже учтены оба сценария.
+Важно (под ваш сценарий):
+- доступ к `172.xx.30.254:80` — это **INPUT** (nginx/docker на самом WireGuard-сервере);
+- доступ к “другим серверам” в `172.xx.30.0/24` — это **FORWARD** (это отдельные ВМ не на этом сервере), и обычно нужен **MASQUERADE**.
 
 ---
 
@@ -95,7 +95,7 @@ exit
 
 Сделаем правила iptables:
 - разрешаем **входящие** TCP/80 на конкретный `172.xx.30.254` **только** с нужного `wgX`;
-- разрешаем **SSH, RDP (TCP/22, TCP/3389)** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`);
+- разрешаем **SSH, RDP (TCP/22, TCP/3389)** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`) через **FORWARD**;
 - (опционально) разрешаем ICMP (ping) только к своему `172.xx.30.254`, если нужно;
 - для `wg1..wg6` **запрещаем остальной входящий трафик** (чтобы не было доступа к другим адресам сервера/стендов);
 - разрешаем handshakes WireGuard по UDP-портам.
@@ -118,15 +118,6 @@ sudo iptables -A INPUT -i wg4 -d 172.24.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg5 -d 172.25.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg6 -d 172.26.30.254 -p tcp --dport 80 -j ACCEPT
 
-# 3.05) SSH, RDP доступ только в свою /24 подсеть (если цели находятся "на стороне сервера" как отдельные хосты,
-# то трафик пойдет через FORWARD — см. блок ниже. Этот блок INPUT полезен, если цели являются локальными IP сервера.)
-sudo iptables -A INPUT -i wg1 -d 172.21.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A INPUT -i wg2 -d 172.22.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A INPUT -i wg3 -d 172.23.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A INPUT -i wg4 -d 172.24.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A INPUT -i wg5 -d 172.25.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-sudo iptables -A INPUT -i wg6 -d 172.26.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
-
 # 3.1) (Опционально) ping только к своему стенду (раскомментируйте при необходимости)
 # sudo iptables -A INPUT -i wg1 -d 172.21.30.254 -p icmp --icmp-type echo-request -j ACCEPT
 # sudo iptables -A INPUT -i wg2 -d 172.22.30.254 -p icmp --icmp-type echo-request -j ACCEPT
@@ -144,10 +135,11 @@ sudo iptables -A INPUT -i wg5 -j DROP
 sudo iptables -A INPUT -i wg6 -j DROP
 ```
 
-#### Если “другие серверы” находятся не на самом VPN-сервере (нужен FORWARD)
+#### Доступ к “другим серверам” (отдельные ВМ) — нужен FORWARD + MASQUERADE
 
-Если хосты `172.xx.30.0/24` — это **отдельные машины** в сети за сервером, то понадобятся правила `FORWARD`
-и, как правило, SNAT (чтобы тем машинам не нужно было знать маршрут обратно в VPN-сети `10.201.x.0/24`).
+В вашем случае хосты `172.xx.30.0/24` — это **отдельные машины** (не WireGuard-сервер), поэтому:
+- трафик из VPN пойдёт через **FORWARD**
+- почти всегда нужен **MASQUERADE**, чтобы этим ВМ не нужно было прописывать маршрут обратно в `10.201.x.0/24`
 
 1) Узнайте интерфейс выхода в “лабораторную” сеть (пример: `eth1`):
 
@@ -155,13 +147,13 @@ sudo iptables -A INPUT -i wg6 -j DROP
 ip route | grep 172.21.30.0/24
 ```
 
-2) Разрешите форвардинг SSH только в свою подсеть:
+2) Разрешите форвардинг только в свою подсеть (например, SSH/RDP — `TCP/22, TCP/3389`):
 
 ```bash
 # Разрешаем established
 sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-# Team1: wg1 -> 172.21.30.0/24 (SSH)
+# Team1: wg1 -> 172.21.30.0/24 (SSH/RDP)
 sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
 # Team2..Team6:
 sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp -m multiport --dports 22,3389 -j ACCEPT
@@ -356,9 +348,11 @@ sudo ss -lunp | grep 5182
 
 ```bash
 curl -I http://172.21.30.254/
+# Пример SSH проверки (если в подсети есть SSH-хост):
+# ssh user@172.21.30.10
 ```
 
-Проверка изоляции: клиент team1 **не должен** иметь доступ к `172.22.30.254` и т.д.
+Проверка изоляции: клиент team1 **не должен** иметь доступ к `172.22.30.0/24` (например, `172.22.30.254`) и т.д.
 
 ---
 
