@@ -1,5 +1,6 @@
-**ad-create-users**
-Create users by pws
+# ad-create-users
+
+Create users by powershell
 
 $Password = "TestPass123!" # ← ваш пароль
 
