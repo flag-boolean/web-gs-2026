@@ -4379,12 +4379,12 @@
 			<title>Лист.1546</title>
 			<g id="shape1547-2022" v:mID="1547" v:groupContext="shape">
 				<title>Лист.1547</title>
-				<desc>Astra Client GS-CLIENT01 172.2X.31.101/24 Astra Linux SE 1.7....</desc>
+				<desc>Astra Client GS-CLIENT02 172.2X.31.101/24 Astra Linux SE 1.7....</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="53.1948" cy="554.068" width="106.39" height="82.4151"/>
 				<rect x="0" y="512.86" width="106.39" height="82.4151" class="st20"/>
 				<text x="4" y="524.96" class="st21" v:langID="1033"><v:paragraph/><v:tabList/>Astra Client<v:newlineChar/><tspan
-							x="4" dy="1.2em" class="st22">GS</tspan><tspan class="st22">-</tspan><tspan class="st22">CLIENT01<v:newlineChar/></tspan><tspan
+							x="4" dy="1.2em" class="st22">GS</tspan><tspan class="st22">-</tspan><tspan class="st22">CLIENT02<v:newlineChar/></tspan><tspan
 							x="4" dy="1.2em" class="st22">172.2X.3</tspan><tspan class="st22" v:langID="1049">1</tspan><tspan
 							class="st22">.101/24<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st22">Astra Linux SE 1.7.5.16<v:newlineChar/></tspan><tspan
 							x="4" dy="1.2em" class="st22">vCPU: 4<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st22">RAM: 8 <v:newlineChar/></tspan><tspan
