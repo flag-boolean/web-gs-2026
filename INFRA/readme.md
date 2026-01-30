@@ -110,7 +110,6 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 
 ---
 
-## 5) Kaspersky Security Mail Gateway / KSMG
 ## 5) Kaspersky Security Mail Gateway (KSMG)
 
 - Образ для развёртывания: https://disk.yandex.ru/d/woTnFdn0c6HrqQ
@@ -124,6 +123,7 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 ## 6) Опиционально
 
 - Синхронизировать время через NTP/chrony для всех хостов.
+
 
 
 
