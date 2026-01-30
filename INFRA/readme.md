@@ -91,7 +91,7 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 - Отключить ufw (если он активен).
 - Настроить SSH-доступ.
 - Установить `cifs-utils` для доступа к SMB/CIFS-ресурсам (файловый сервер).
-
+- Для ВМ - ASTRA Client 01 и 02 - установить xRDP + им нужен графический интерфейс fly-dm, дополнительно к отркрытому SSH порту требуется еще и доступ по 3389 (xRDP).
 ---
 
 ## 4) Файловый сервер дистрибутивов (DISTRIB)
@@ -110,6 +110,7 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 ## 5) Опционально
 
 - Синхронизировать время через NTP/chrony для всех хостов.
+
 
 
 
