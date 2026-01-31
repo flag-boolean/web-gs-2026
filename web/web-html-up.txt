@@ -1,3 +1,4 @@
+# Лучше использовать docker-compose
 docker run -d \
   --name web-lab-1 \
   --restart unless-stopped \
@@ -39,3 +40,4 @@ docker run -d \
   -p 172.26.30.254:80:80 \
   -v ~/teams/6:/usr/share/nginx/html:ro \
   nginx:alpine
+
