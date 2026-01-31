@@ -7,6 +7,8 @@ set -euo pipefail
 
 # Usage example:
 # NUM_TEAMS=5 SERVER_PUBLIC_IP=1.2.3.4 OUT_IF=eth1 DRY_RUN=0 ./wg-iptables-setup.sh
+# Скрипт автоматизированной настройки правил IPTABLES
+
 
 NUM_TEAMS=${NUM_TEAMS:-5}
 ADMIN_PORT=${ADMIN_PORT:-51820}
