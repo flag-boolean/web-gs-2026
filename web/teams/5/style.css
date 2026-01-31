@@ -413,7 +413,7 @@ body.theme-light .themeBtn {
 
 .osBadge.osBadge--cat-pam {
     background: var(--cat-pam) !important;
-    color: var(--blue) !important;
+    color: var(--white) !important;
 }
 
 .osBadge.osBadge--cat-me {
@@ -449,7 +449,7 @@ body.theme-light .osBadge.osBadge--cat-siem {
 
 body.theme-light .osBadge.osBadge--cat-pam {
     background: var(--cat-pam) !important;
-    color: var(--blue) !important;
+    color: var(--white) !important;
 }
 
 body.theme-light .osBadge.osBadge--cat-me {
@@ -538,12 +538,61 @@ body.theme-light .card__id {
     max-width: 340px;
 }
 
+.card__ip {
+    margin: 8px 0 0;
+    color: var(--panel-muted);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: .2px;
+    opacity: 0.85;
+}
+
 .card__actions {
     margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     align-items: stretch;
+}
+
+.card__info {
+    grid-column: 1 / -1;
+    margin-left: calc(-1 * clamp(6px, 0.8vw, 12px));
+    margin-right: calc(-1 * clamp(6px, 0.8vw, 12px));
+    padding: clamp(10px, 0.8vw, 14px) clamp(14px, 1.1vw, 22px);
+    background: var(--blue);
+    color: var(--white);
+    font-weight: 900;
+    font-size: clamp(13px, 0.85vw, 16px);
+    letter-spacing: .3px;
+    border-radius: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card__info--link {
+    background: var(--blue);
+    color: var(--white);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .14s ease, filter .14s ease;
+}
+
+.card__info--link:hover {
+    background: #2A00CC;
+    filter: brightness(1.1);
+}
+
+.card__info--smb {
+    background: transparent;
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    padding: clamp(8px, 0.7vw, 12px) clamp(12px, 1vw, 20px);
 }
 
 .btn {

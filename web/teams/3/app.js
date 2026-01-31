@@ -1,4 +1,4 @@
-const CATEGORIES = ["ВСЕ_ВМ", "DLP", "АВЗ", "SIEM", "PAM", "МЭ", "НСД", "Clients"];
+const CATEGORIES = ["ВСЕ_ВМ", "DC", "FS", "МЭ", "DLP", "АВЗ", "SIEM", "Clients"];
 
 const DATA = [
   {
@@ -9,7 +9,8 @@ const DATA = [
         os: "linux",
         title: "INFOWATCH TRAFFIC MONITOR",
         desc: "СИСТЕМА ПРЕДОТВРАЩЕНИЯ УТЕЧЕК ИНФОРМАЦИИ",
-        ssh: { enabled: true, host: "192.168.0.201", port: 22, user: "root" },
+        ip: "172.23.30.12",
+        ssh: { enabled: true, host: "172.23.30.12", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
@@ -22,7 +23,8 @@ const DATA = [
         os: "linux",
         title: "INFOWATCH DEVICE MONITOR",
         desc: "СИСТЕМА ПРЕДОТВРАЩЕНИЯ УТЕЧЕК ИНФОРМАЦИИ",
-        ssh: { enabled: true, host: "192.168.0.201", port: 22, user: "root" },
+        ip: "172.23.30.13",
+        ssh: { enabled: true, host: "172.23.30.13", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
@@ -35,21 +37,23 @@ const DATA = [
         os: "linux",
         title: "INFOWATCH DATA DISCOVERY",
         desc: "СИСТЕМА ПРЕДОТВРАЩЕНИЯ УТЕЧЕК ИНФОРМАЦИИ",
-        ssh: { enabled: true, host: "192.168.0.201", port: 22, user: "root" },
+        ip: "172.23.30.14",
+        ssh: { enabled: true, host: "172.23.30.14", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
   },
-  {
-    category: "DLP",
+    {
+    category: "АВЗ",
     items: [
       {
-        id: "DOZOR",
+        id: "KSC",
         os: "linux",
-        title: "SOLAR DOZOR",
-        desc: "СИСТЕМА ПРЕДОТВРАЩЕНИЯ УТЕЧЕК ИНФОРМАЦИИ",
-        ssh: { enabled: true, host: "192.168.0.201", port: 22, user: "root" },
-        rdp: { enabled: false }
+        title: "KASPERSKY SECURITY CENTER",
+        desc: "КОНТРОЛЬ АНТИВИРУСНОЙ ЗАЩИТЫ",
+        ip: "172.23.30.11",
+        ssh: { enabled: true, host: "172.23.30.11", port: 22, user: "astra" },
+        rdp: {  enabled: false }
       }
     ]
   },
@@ -57,25 +61,15 @@ const DATA = [
     category: "АВЗ",
     items: [
       {
-        id: "KSC",
-        os: "windows",
-        title: "KASPERSKY SECURITY CENTER",
-        desc: "КОНТРОЛЬ АНТИВИРУСНОЙ ЗАЩИТЫ",
-        ssh: { enabled: false },
-        rdp: { enabled: true, host: "192.168.0.205", port: 3389, user: "astra" }
-      }
-    ]
-  },
-  {
-    category: "SIEM",
-    items: [
-      {
-        id: "MAXPATROL_SIEM",
+        id: "KSMG",
         os: "linux",
-        title: "MAX PATROLSIEM",
-        desc: "СБОР И НОРМАЛИЗАЦИЯ СОБЫТИЙ",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
-        rdp: { enabled: false }
+        title: "KASPERSKY SECURITY MAIL GATEWAY",
+        desc: "КОНТРОЛЬ ПОЧТОВОГО ТРАФИКА",
+        ip: "172.23.30.15",
+        ssh: { enabled: false },
+        rdp: {  enabled: false },
+        info: "https://172.23.30.15/",
+        infoType: "link"
       }
     ]
   },
@@ -87,20 +81,50 @@ const DATA = [
         os: "linux",
         title: "KUMA",
         desc: "СБОР И НОРМАЛИЗАЦИЯ СОБЫТИЙ",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
+        ip: "172.23.30.16",
+        ssh: { enabled: true, host: "172.23.30.16", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
   },
   {
-    category: "PAM",
+    category: "DC",
     items: [
       {
-        id: "PAM",
+        id: "DC",
         os: "linux",
-        title: "INDEED PAM",
-        desc: "КОНТРОЛЬ ПРИВИЛЕГИРОВАННЫХ ПОЛЬЗОВАТЕЛЕЙ",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
+        title: "ALD PRO DC",
+        desc: "КОНТРОЛЛЕР ДОМЕНА АЛД ПРО",
+        ip: "172.23.30.2",
+        ssh: { enabled: true, host: "172.23.30.2", port: 22, user: "astra" },
+        rdp: { enabled: false }
+      }
+    ]
+  },
+    {
+    category: "DC",
+    items: [
+      {
+        id: "DC",
+        os: "windows",
+        title: "AD DC",
+        desc: "КОНТРОЛЛЕР ДОМЕНА ACTIVE DIRECTORY",
+        ip: "172.23.30.3",
+        ssh: { enabled: false  },
+        rdp: { enabled: true, host: "172.23.30.3", port: 3389, user: "Администратор"}
+      }
+    ]
+  },
+    {
+    category: "DC",
+    items: [
+      {
+        id: "MAIL",
+        os: "linux",
+        title: "POSTFIX MAIL SERVER",
+        desc: "ПОЧТОВЫЙ СЕРВЕР",
+        ip: "172.23.30.110",
+        ssh: { enabled: true, host: "172.23.30.110", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
@@ -113,21 +137,41 @@ const DATA = [
         os: "linux",
         title: "PFSENSE",
         desc: "МЕЖСЕТЕВОЙ ЭКРАН",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
-        rdp: { enabled: false }
+        ip: "172.23.30.254",
+        ssh: { enabled: false },
+        rdp: { enabled: false },
+        info: "http://172.23.30.254/",
+        infoType: "link"
       }
     ]
   },
   {
-    category: "НСД",
+    category: "FS",
     items: [
       {
-        id: "SNS_LSP",
+        id: "FS_LINUX",
         os: "linux",
-        title: "SNS LSP",
-        desc: "СРЕДСТВО ОТ НСД",
-        ssh: { enabled: true, host: "10.10.0.10", port: 22, user: "root" },
+        title: "FSHARE",
+        desc: "ФАЙЛОВЫЙ СЕРВЕР ПРЕДПРИЯТИЯ",
+        ip: "172.23.30.4",
+        ssh: { enabled: true, host: "172.23.30.4", port: 22, user: "astra" },
         rdp: { enabled: false }
+      }
+    ]
+  },
+    {
+    category: "FS",
+    items: [
+      {
+        id: "FS_DISTRIB",
+        os: "windows",
+        title: "FILESHARE_DISTRIB",
+        desc: "Дистрибутивы",
+        ip: "172.23.30.252",
+        ssh: { enabled: false },
+        rdp: { enabled: false },
+        info: "smb://172.23.30.252/DISTRIB/",
+        infoType: "smb"
       }
     ]
   },
@@ -139,7 +183,8 @@ const DATA = [
         os: "linux",
         title: "ASTRA_OFFICE",
         desc: "КЛИЕНТ ОФИСА АСТРА",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
+        ip: "172.23.30.101",
+        ssh: { enabled: true, host: "172.23.30.101", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
@@ -152,7 +197,8 @@ const DATA = [
         os: "linux",
         title: "ASTRA_FILIAL",
         desc: "КЛИЕНТ ФИЛИАЛА АСТРА",
-        ssh: { enabled: true, host: "10.10.0.50", port: 22, user: "root" },
+        ip: "172.23.31.101",
+        ssh: { enabled: true, host: "172.23.31.101", port: 22, user: "astra" },
         rdp: { enabled: false }
       }
     ]
@@ -165,8 +211,9 @@ const DATA = [
         os: "windows",
         title: "WINDOWS_OFFICE",
         desc: "КЛИЕНТ ОФИСА WINDOWS",
+        ip: "172.23.30.102",
         ssh: { enabled: false },
-        rdp: { enabled: true, host: "10.10.0.50", port: 3389, user: "windows" }
+        rdp: { enabled: true, host: "172.23.30.102", port: 3389, user: "windows" }
       }
     ]
   }
@@ -274,9 +321,9 @@ function catBadgeHTML(cat) {
     "DLP": "dlp",
     "АВЗ": "avz",
     "SIEM": "siem",
-    "PAM": "pam",
+    "DC": "pam",
     "МЭ": "me",
-    "НСД": "nsd",
+    "FS": "nsd",
     "Clients": "clients"
   };
   const catClass = catMap[cat] ? `osBadge--cat-${catMap[cat]}` : "";
@@ -336,6 +383,33 @@ function cardHTML(vm, category) {
   const sshDisabled = vm.ssh?.enabled ? "" : "disabled";
   const rdpDisabled = vm.rdp?.enabled ? "" : "disabled";
 
+  // Если у объекта есть поле info, показываем его вместо кнопок SSH/RDP
+  let actionsHTML;
+  if (vm.info) {
+    if (vm.infoType === "link") {
+      // Для PFSENSE - ссылка
+      actionsHTML = `<a href="${vm.info}" target="_blank" class="card__info card__info--link">${vm.info}</a>`;
+    } else if (vm.infoType === "smb") {
+      // Для FS - только окантовка
+      actionsHTML = `<div class="card__info card__info--smb">${vm.info}</div>`;
+    } else {
+      // Стандартный вид
+      actionsHTML = `<div class="card__info">${vm.info}</div>`;
+    }
+  } else {
+    actionsHTML = `
+      <button class="btn btn--ssh" ${sshDisabled}
+        type="button" data-action="ssh" data-key="${vm._key}">
+        ${svgTerminal()} SSH
+      </button>
+
+      <button class="btn btn--rdp" ${rdpDisabled}
+        type="button" data-action="rdp" data-key="${vm._key}">
+        ${svgMonitor()} RDP
+      </button>
+    `;
+  }
+
   return `
     <article class="card">
       <div class="card__top">
@@ -348,17 +422,10 @@ function cardHTML(vm, category) {
 
       <div class="card__title">${vm.title}</div>
       <p class="card__desc">${vm.desc}</p>
+      ${vm.ip ? `<p class="card__ip">${vm.ip}</p>` : ''}
 
       <div class="card__actions">
-        <button class="btn btn--ssh" ${sshDisabled}
-          type="button" data-action="ssh" data-key="${vm._key}">
-          ${svgTerminal()} SSH
-        </button>
-
-        <button class="btn btn--rdp" ${rdpDisabled}
-          type="button" data-action="rdp" data-key="${vm._key}">
-          ${svgMonitor()} RDP
-        </button>
+        ${actionsHTML}
       </div>
     </article>
   `;
