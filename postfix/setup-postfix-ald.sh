@@ -2,11 +2,11 @@
 # setup-postfix-ald.sh
 # Скрипт развёртывания Postfix + Dovecot для внутренней почты ALD Pro / FreeIPA
 # По умолчанию DRY_RUN=1 — скрипт покажет действия. Запускать с DRY_RUN=0 для применения:
+# LAB_NET - все подсети всех лабораторий
 #  sudo \
 #   FQDN=mail.aldpro.lab \
 #   DOMAIN=aldpro.lab \
-#   LAB_NET1=172.21.30.0/24 \
-#   LAB_NET2=172.21.31.0/24 \
+#   LAB_NET=172.20.0.0/12 \
 #   APPLY_FIREWALL=1 \
 #   DRY_RUN=0 \
 #   ./setup-postfix-ald.sh
@@ -21,27 +21,26 @@ FQDN="${FQDN:-mail.aldpro.lab}"
 DOMAIN="${DOMAIN:-aldpro.lab}"
 
 # Подсети лаборатории (для разных лабораторий задавайте через переменные окружения)
-# По умолчанию: 172.21.30.0/24 и 172.21.31.0/24
-LAB_NET1="${LAB_NET1:-172.21.30.0/24}"
-LAB_NET2="${LAB_NET2:-172.21.31.0/24}"
+# По умолчанию: 172.20.0.0/12
+LAB_NET="${LAB_NET:-172.20.0.0/12}"
 
 # Подсеть(и), которым разрешён доступ к SMTP/IMAP (используется для firewall)
-# По умолчанию: подсети лаборатории (LAB_NET1 и LAB_NET2)
+# По умолчанию: подсети лаборатории (LAB_NET)
 # Можно переопределить через переменную окружения (разделитель пробел):
 #   export LAN_NETS="192.168.50.0/24 10.0.0.0/8"
 #   sudo DRY_RUN=0 ./setup-postfix-ald.sh
-if [ -z "${LAN_NETS:-}" ]; then
-  LAN_NETS_DEFAULT=("${LAB_NET1}" "${LAB_NET2}")
-else
-  # Преобразуем строку в массив (bash-совместимо)
-  IFS=' ' read -ra LAN_NETS_DEFAULT <<< "${LAN_NETS}"
-fi
-LAN_NETS=("${LAN_NETS_DEFAULT[@]}")
+# if [ -z "${LAN_NETS:-}" ]; then
+#   LAN_NETS_DEFAULT=("${LAB_NET}")
+# else
+#   # Преобразуем строку в массив (bash-совместимо)
+#   IFS=' ' read -ra LAN_NETS_DEFAULT <<< "${LAN_NETS}"
+# fi
+LAN_NETS=("${LAB_NET}")
 
 # Доверенные сети для Postfix (включает подсети лаборатории)
 # Можно переопределить через переменную MYNETWORKS
 if [ -z "${MYNETWORKS:-}" ]; then
-  MYNETWORKS="127.0.0.0/8 [::1]/128 ${LAB_NET1} ${LAB_NET2} 192.168.0.0/16 10.0.0.0/8 172.16.0.0/12"
+  MYNETWORKS="127.0.0.0/8 [::1]/128 ${LAB_NET} 192.168.0.0/16 10.0.0.0/8 172.16.0.0/12"
 fi
 # Пакеты для установки
 PACKAGES=(postfix dovecot-core dovecot-imapd dovecot-lmtpd bsd-mailx openssl)
@@ -98,7 +97,7 @@ fi
 log_info "=== Postfix + Dovecot Setup для ALD Pro ==="
 log_info "Target FQDN: ${FQDN}"
 log_info "Domain: ${DOMAIN}"
-log_info "Подсети лаборатории: ${LAB_NET1}, ${LAB_NET2}"
+log_info "Подсети лаборатории: ${LAB_NET}"
 log_info "LAN Networks (для firewall): ${LAN_NETS[*]}"
 log_info "Доверенные сети Postfix (mynetworks): ${MYNETWORKS}"
 if [ "${DRY_RUN}" -eq 1 ]; then
