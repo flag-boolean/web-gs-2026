@@ -2,13 +2,12 @@
 
 Задача: поднять WireGuard на сервере Ubuntu так, чтобы:
 - был **1 “общий/админский” интерфейс** (доступ по белому IP сервера);
-- было **6 интерфейсов под команды**, каждая команда получает доступ **только** к своему веб-стенду (IP из `docker-compose.yml`):
+- было **5 интерфейсов под команды**, каждая команда получает доступ **только** к своему веб-стенду (IP из `docker-compose.yml`):
   - team1 → `172.21.30.254:80`
   - team2 → `172.22.30.254:80`
   - team3 → `172.23.30.254:80`
   - team4 → `172.24.30.254:80`
   - team5 → `172.25.30.254:80`
-  - team6 → `172.26.30.254:80`
 
 Также: после открытия веба на `...254` участнику нужно ходить по **всем портам к другим серверам в этой же /24 подсети** (например, `172.21.30.0/24` для team1).
 
@@ -61,11 +60,10 @@ sudo sysctl --system
 - `wg3` — team3 (доступ только к `172.23.30.254:80`)
 - `wg4` — team4 (доступ только к `172.24.30.254:80`)
 - `wg5` — team5 (доступ только к `172.25.30.254:80`)
-- `wg6` — team6 (доступ только к `172.26.30.254:80`)
 
 Порты (можно менять, главное открыть на firewall/NAT):
 - `wg0`: UDP `51820`
-- `wg1..wg6`: UDP `51821..51826`
+- `wg1..wg5`: UDP `51821..51825`
 
 VPN-адреса (внутренние, не пересекаются с вашими `172.xx`):
 - `wg0`: `10.200.0.1/24`
@@ -74,7 +72,7 @@ VPN-адреса (внутренние, не пересекаются с ваш�
 - `wg3`: `10.201.3.1/24`
 - `wg4`: `10.201.4.1/24`
 - `wg5`: `10.201.5.1/24`
-- `wg6`: `10.201.6.1/24`
+
 
 ---
 
@@ -95,8 +93,8 @@ exit
 
 Сделаем правила iptables:
 - разрешаем **входящие** TCP/80 на конкретный `172.xx.30.254` **только** с нужного `wgX`;
-- разрешаем **все** только в **свою подсеть /24** (например, team1 → `172.21.30.0/24`) через **FORWARD**;
-- для `wg1..wg6` **запрещаем остальной входящий трафик** (чтобы не было доступа к другим адресам сервера/стендов);
+- разрешаем **все** только в **свою подсеть /24** (например, team1 → `172.21.3(0-1).0/24`) через **FORWARD**;
+- для `wg1..wg5` **запрещаем остальной входящий трафик** (чтобы не было доступа к другим адресам сервера/стендов);
 - разрешаем handshakes WireGuard по UDP-портам.
 
 Применить правила (выполняйте от root/через sudo):
@@ -107,7 +105,7 @@ sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 sudo iptables -A INPUT -i lo -j ACCEPT
 
 # 2) WireGuard handshake (UDP порты)
-sudo iptables -A INPUT -p udp -m multiport --dports 51820,51821,51822,51823,51824,51825,51826 -j ACCEPT
+sudo iptables -A INPUT -p udp -m multiport --dports 51820,51821,51822,51823,51824,51825 -j ACCEPT
 
 # 3) Доступ к стендам только со своего wg-интерфейса (HTTP/80)
 sudo iptables -A INPUT -i wg1 -d 172.21.30.254 -p tcp --dport 80 -j ACCEPT
@@ -115,7 +113,7 @@ sudo iptables -A INPUT -i wg2 -d 172.22.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg3 -d 172.23.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg4 -d 172.24.30.254 -p tcp --dport 80 -j ACCEPT
 sudo iptables -A INPUT -i wg5 -d 172.25.30.254 -p tcp --dport 80 -j ACCEPT
-sudo iptables -A INPUT -i wg6 -d 172.26.30.254 -p tcp --dport 80 -j ACCEPT
+
 
 # 4) Запрет "лишнего" трафика с team интерфейсов
 sudo iptables -A INPUT -i wg1 -j DROP
@@ -123,7 +121,7 @@ sudo iptables -A INPUT -i wg2 -j DROP
 sudo iptables -A INPUT -i wg3 -j DROP
 sudo iptables -A INPUT -i wg4 -j DROP
 sudo iptables -A INPUT -i wg5 -j DROP
-sudo iptables -A INPUT -i wg6 -j DROP
+
 ```
 
 #### Доступ к “другим серверам” (отдельные ВМ) — нужен FORWARD + MASQUERADE
@@ -144,14 +142,19 @@ ip route | grep 172.21.30.0/24
 # Разрешаем established
 sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-# Team1: wg1 -> 172.21.30.0/24 (SSH/RDP)
+# Team1: wg1 -> 172.21.30.0/24 
 sudo iptables -A FORWARD -i wg1 -d 172.21.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg1 -d 172.21.31.0/24 -p tcp -j ACCEPT
 # Team2..Team6:
 sudo iptables -A FORWARD -i wg2 -d 172.22.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg2 -d 172.22.31.0/24 -p tcp -j ACCEPT
 sudo iptables -A FORWARD -i wg3 -d 172.23.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg3 -d 172.23.31.0/24 -p tcp -j ACCEPT
 sudo iptables -A FORWARD -i wg4 -d 172.24.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg4 -d 172.24.31.0/24 -p tcp -j ACCEPT
 sudo iptables -A FORWARD -i wg5 -d 172.25.30.0/24 -p tcp -j ACCEPT
-sudo iptables -A FORWARD -i wg6 -d 172.26.30.0/24 -p tcp -j ACCEPT
+sudo iptables -A FORWARD -i wg5 -d 172.25.31.0/24 -p tcp -j ACCEPT
+
 
 # Запрещаем остальное с team интерфейсов
 sudo iptables -A FORWARD -i wg1 -j DROP
@@ -159,7 +162,6 @@ sudo iptables -A FORWARD -i wg2 -j DROP
 sudo iptables -A FORWARD -i wg3 -j DROP
 sudo iptables -A FORWARD -i wg4 -j DROP
 sudo iptables -A FORWARD -i wg5 -j DROP
-sudo iptables -A FORWARD -i wg6 -j DROP
 ```
 
 3) SNAT (если у целевых машин нет маршрута обратно в `10.201.x.0/24`):
@@ -173,7 +175,11 @@ sudo iptables -t nat -A POSTROUTING -s 10.201.2.0/24 -o "$OUT_IF" -d 172.22.30.0
 sudo iptables -t nat -A POSTROUTING -s 10.201.3.0/24 -o "$OUT_IF" -d 172.23.30.0/24 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -s 10.201.4.0/24 -o "$OUT_IF" -d 172.24.30.0/24 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -s 10.201.5.0/24 -o "$OUT_IF" -d 172.25.30.0/24 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -s 10.201.6.0/24 -o "$OUT_IF" -d 172.26.30.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.201.1.0/24 -o "$OUT_IF" -d 172.21.31.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.201.2.0/24 -o "$OUT_IF" -d 172.22.31.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.201.3.0/24 -o "$OUT_IF" -d 172.23.31.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.201.4.0/24 -o "$OUT_IF" -d 172.24.31.0/24 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -s 10.201.5.0/24 -o "$OUT_IF" -d 172.25.31.0/24 -j MASQUERADE
 ```
 
 Проверить порядок правил:
@@ -206,7 +212,7 @@ PrivateKey = <SERVER_PRIVATE_KEY>
 SaveConfig = false
 ```
 
-Создайте `/etc/wireguard/wg1.conf` … `/etc/wireguard/wg6.conf` по шаблону (пример для `wg1`):
+Создайте `/etc/wireguard/wg1.conf` … `/etc/wireguard/wg5.conf` по шаблону (пример для `wg1`):
 
 ```ini
 [Interface]
@@ -233,7 +239,6 @@ sudo systemctl enable --now wg-quick@wg2
 sudo systemctl enable --now wg-quick@wg3
 sudo systemctl enable --now wg-quick@wg4
 sudo systemctl enable --now wg-quick@wg5
-sudo systemctl enable --now wg-quick@wg6
 ```
 
 Проверка:
@@ -319,10 +324,10 @@ sudo cat /etc/wireguard/keys/server.pub
 sudo cat /etc/wireguard/clients/team1-user1/client.key
 ```
 
-По аналогии делаются конфиги для team2..team6, только:
-- Endpoint порт: `51822..51826`
-- AllowedIPs: `172.22.30.0/24` … `172.26.30.0/24`
-- VPN Address: `10.201.2.x/32` … `10.201.6.x/32`
+По аналогии делаются конфиги для team2..team5, только:
+- Endpoint порт: `51822..51825`
+- AllowedIPs: `172.22.3(0-1).0/24` … `172.25.3(0-1).0/24`
+- VPN Address: `10.201.2.x/32` … `10.201.5.x/32`
 
 ---
 
@@ -340,7 +345,7 @@ sudo ss -lunp | grep 5182
 ```bash
 curl -I http://172.21.30.254/
 # Пример SSH проверки (если в подсети есть SSH-хост):
-# ssh user@172.21.30.10
+# ssh astra@172.21.30.10
 ```
 
 Проверка изоляции: клиент team1 **не должен** иметь доступ к `172.22.30.0/24` (например, `172.22.30.254`) и т.д.
@@ -353,5 +358,6 @@ curl -I http://172.21.30.254/
 - **Неправильный `Endpoint`**: должен быть белый IP сервера и порт конкретного `wgX`.
 - **Нет IP на сервере `172.xx.30.254`**: тогда nginx bind не поднимется и доступ не будет работать.
 - **Фаервол режет INPUT**: проверьте `iptables -L INPUT -n -v --line-numbers` и логи.
+
 
 
