@@ -72,7 +72,7 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 - Разметка дисков: автоматическая разметка подходит для всех VM.
 
 **Образы и учётные данные:**
-- Astra Linux: https://disk.yandex.ru/d/RveG0lZnPEb8gg - для всех ВМ, для Контроллера Домена ALD PRO - https://disk.yandex.ru/d/GZxOyRY0GOtZ1Q
+- Astra Linux: Версия 1.7.5.9 - https://disk.yandex.ru/d/wPWHiICBL6VMuA, версия 1.7.7.9 - https://disk.yandex.ru/d/GZxOyRY0GOtZ1Q
   - Логин: `astra`
   - Пароль: `xxXX1234`
 - Windows 10 Pro: https://disk.yandex.ru/d/Avb_btJ-quWibQ
@@ -123,6 +123,7 @@ sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io doc
 ## 6) Опционально
 
 - Синхронизировать время через NTP/chrony для всех хостов.
+
 
 
 
