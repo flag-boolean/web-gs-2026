@@ -56,16 +56,16 @@ services:
     networks:
       - web-lab-5-net
 
-  web-lab-6:
-    image: nginx:alpine
-    container_name: web-lab-6
-    restart: unless-stopped
-    ports:
-      - "172.26.30.254:80:80"
-    volumes:
-      - ./teams/6:/usr/share/nginx/html:ro
-    networks:
-      - web-lab-6-net
+  # web-lab-6:
+  #   image: nginx:alpine
+  #   container_name: web-lab-6
+  #   restart: unless-stopped
+  #   ports:
+  #     - "172.26.30.254:80:80"
+  #   volumes:
+  #     - ./teams/6:/usr/share/nginx/html:ro
+  #   networks:
+  #     - web-lab-6-net
 
 networks:
   web-lab-1-net:
@@ -78,5 +78,6 @@ networks:
     driver: bridge
   web-lab-5-net:
     driver: bridge
-  web-lab-6-net:
-    driver: bridge
+  # web-lab-6-net:
+  #   driver: bridge
+
