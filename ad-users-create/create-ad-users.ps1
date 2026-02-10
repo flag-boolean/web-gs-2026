@@ -1,3 +1,4 @@
+
 # ===== КОДИРОВКА: исправление кириллицы =====
 chcp 65001 | Out-Null
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -27,10 +28,9 @@ function Parse-FIO {
     [PSCustomObject]@{
         Surname    = $parts[0]                                  # Фамилия
         GivenName  = $parts[1]                                  # Имя
-        Initials   = if ($parts.Count -ge 3) { "$($parts[2][0])." } else { $null }  # Отчество (инициал)
-        MiddleName = if ($parts.Count -ge 3) { $parts[2] } else { $null }          # Полное отчество
+        Initials   = if ($parts.Count -ge 3) { "$($parts[2][0])." } else { $null }  # Отчество → инициал (В.)
         DisplayName = $FullName                                 # Полное ФИО
-        Name       = "$($parts[0]) $($parts[1])"                # Фамилия Имя (для отображения в консоли)
+        Name       = "$($parts[0]) $($parts[1])"                # Фамилия Имя
     }
 }
 
@@ -56,8 +56,6 @@ if (-not (Get-ADUser -Filter "SamAccountName -eq 'pvsidorov'" -ErrorAction Silen
         EmailAddress         = "pvsidorov@$Domain"
         PassThru             = $true
     }
-    # Добавляем отчество только если оно есть
-    if ($GenDirFIO.MiddleName) { $params.MiddleName = $GenDirFIO.MiddleName }
 
     New-ADUser @params | Out-Null
     Write-Host "✓ Генеральный директор: $($GenDirFIO.DisplayName) — $($GenDirFIO.Title)" -ForegroundColor Magenta
@@ -110,7 +108,6 @@ foreach ($Dept in $Departments) {
             EmailAddress         = "$($Dept.HeadLogin)@$Domain"
             PassThru             = $true
         }
-        if ($HeadFIO.MiddleName) { $params.MiddleName = $HeadFIO.MiddleName }
 
         New-ADUser @params | Out-Null
         Write-Host "✓ Начальник $($Dept.Name): $($HeadFIO.DisplayName) → Сидоров П.В." -ForegroundColor Cyan
@@ -141,7 +138,6 @@ foreach ($Dept in $Departments) {
             EmailAddress         = "$($Dept.EmpLogin)@$Domain"
             PassThru             = $true
         }
-        if ($EmpFIO.MiddleName) { $params.MiddleName = $EmpFIO.MiddleName }
 
         New-ADUser @params | Out-Null
         Write-Host "✓ Сотрудник $($Dept.Name): $($EmpFIO.DisplayName) → $($HeadFIO.DisplayName)" -ForegroundColor Green
@@ -149,4 +145,4 @@ foreach ($Dept in $Departments) {
 }
 
 Write-Host "`n✅ Создано: 1 ген.дир + 14 начальников + 14 сотрудников = 29 пользователей" -ForegroundColor Yellow
-Write-Host "ℹ️  Все атрибуты ФИО (GivenName, Surname, Initials, DisplayName) заполнены корректно" -ForegroundColor White
+Write-Host "ℹ️  ФИО заполнены через атрибуты: GivenName (имя), Surname (фамилия), Initials (инициал отчества)" -ForegroundColor White
