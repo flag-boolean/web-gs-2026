@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\putty]
+@="URL:Putty Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\putty\shell\open\command]
+@="cmd /V:ON /c set params=%1 && set params=!params:putty://=! && start \"PuTTY\" \"c:\\Program Files\\PuTTY\\putty.exe\" \"!params:/=!\""
